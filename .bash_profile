@@ -3,6 +3,7 @@
 #
 
 [[ -f ~/.bashrc ]] && . ~/.bashrc
+xmodmap ~/.Xmodmap
+feh --bg-scale ~/.wallpaper.jpg
 setxkbmap -layout br
-feh --bg-scale ~/.wallpaper.png
-xmodmamp .Xmodmap
+xrandr --dpi 80

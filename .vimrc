@@ -1,129 +1,221 @@
-set nocompatible              " be iMproved, required
-map <C-S-c> gg"+yG
+" vim-bootstrap b990cad
 
-filetype on                  " required
-autocmd FileType c map <buffer> <F9> :w<CR>:!clear; gcc -Wall -ansi -pedantic -O2 % -o exec%:r.out; ./exec%:r.out; rm *.out;<CR>
-autocmd FileType javascript map <buffer> <F9> :w<CR> :!clear; node %;<CR>
-autocmd FileType ruby map <buffer> <F9> :w<CR>:!clear;ruby  %;<CR>
-autocmd FileType cpp map <buffer> <F9> :!clear; g++ % -o %:r.out; ./%:r.out;<CR>
-autocmd FileType java map <buffer> <F9> :!clear; make<CR>
+"*****************************************************************************
+"" Vim-PLug core
+"*****************************************************************************
+if has('vim_starting')
+  set nocompatible               " Be iMproved
+endif
 
-" set the runtime path to include Vundle and initialize
-set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
-" alternatively, pass a path where Vundle should install plugins
-"call vundle#begin('~/some/path/here')
+let vimplug_exists=expand('~/.vim/autoload/plug.vim')
 
-" let Vundle manage Vundle, required
-Plugin 'VundleVim/Vundle.vim'
+let g:vim_bootstrap_langs = "erlang"
+let g:vim_bootstrap_editor = "vim"				" nvim or vim
 
-Plugin 'pangloss/vim-javascript'
+if !filereadable(vimplug_exists)
+  if !executable("curl")
+    echoerr "You have to install curl or first install vim-plug yourself!"
+    execute "q!"
+  endif
+  echo "Installing Vim-Plug..."
+  echo ""
+  silent !\curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  let g:not_finish_vimplug = "yes"
 
-Plugin 'othree/html5.vim'
+  autocmd VimEnter * PlugInstall
+endif
 
-" Plugin 'benekastah/neomake'
+" Required:
+call plug#begin(expand('~/.vim/plugged'))
 
-" Track the engine.
-Plugin 'SirVer/ultisnips'
-"
-" " Snippets are separated from the engine. Add this if you want them:
-Plugin 'honza/vim-snippets'
+"*****************************************************************************
+"" Plug install packages
+"*****************************************************************************
+Plug 'scrooloose/nerdtree'
+Plug 'jistr/vim-nerdtree-tabs'
+Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-fugitive'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+Plug 'Yggdroot/indentLine'
 
-Plugin 'vim-airline/vim-airline'
+"" Color
+Plug 'tomasr/molokai'
+
+"" Clojure
+Plug 'guns/vim-sexp'
+Plug 'tpope/vim-sexp-mappings-for-regular-people'
+Plug 'kien/rainbow_parentheses'
+Plug 'tpope/vim-fireplace'
+Plug 'guns/vim-clojure-static'
+
+"*****************************************************************************
+"*****************************************************************************
+
+"" Include user's extra bundle
+if filereadable(expand("~/.vimrc.local.bundles"))
+  source ~/.vimrc.local.bundles
+endif
+
+call plug#end()
+
+" Required:
+filetype plugin indent on
 
 
-Plugin 'scrooloose/nerdtree'
-
-Plugin 'ternjs/tern_for_vim'
-
-Plugin 'Valloric/YouCompleteMe'
-
-Plugin 'flazz/vim-colorschemes'
-
-Plugin 'vim-airline/vim-airline-themes'
-
-Plugin 'morhetz/gruvbox'
-
-Plugin 'tpope/vim-commentary'
-Bundle "myusuf3/numbers.vim"
-
-Plugin 'takac/vim-hardtime'
-
-" All of your Plugins must be added before the following line
-call vundle#end()            " required
-filetype plugin indent on    " required
-" To ignore plugin indent changes, instead use:
-"filetype plugin on
-"
-" Brief help
-" :PluginList       - lists configured plugins
-" :PluginInstall    - installs plugins; append `!` to update or just :PluginUpdate
-" :PluginSearch foo - searches for foo; append `!` to refresh local cache
-" :PluginClean      - confirms removal of unused plugins; append `!` to auto-approve removal
-"
-" see :h vundle for more details or wiki for FAQ
-" Put your non-Plugin stuff after this line
-
+"*****************************************************************************
+"" Basic Setup
+"*****************************************************************************"
+"" Encoding
 set encoding=utf-8
-set laststatus=2
-set mouse=a
-set tabstop=2
+set fileencoding=utf-8
+set fileencodings=utf-8
+set bomb
+set binary
+set ttyfast
+
+"" Fix backspace indent
 set backspace=indent,eol,start
-set autoindent
-set copyindent
-set shiftwidth=2
-set shiftround
-set ignorecase
-set showmatch
-set smartcase
-set smarttab
+
+"" Tabs. May be overriten by autocmd rules
+set tabstop=4
+set softtabstop=0
+set shiftwidth=4
+set expandtab
+
+"" Map leader to ,
+let mapleader=','
+
+"" Enable hidden buffers
+set hidden
+
+"" Searching
 set hlsearch
 set incsearch
-set expandtab
-set number
+set ignorecase
+set smartcase
+
+"" Directories for swp files
+set nobackup
+set noswapfile
+"*****************************************************************************
+"" Visual Settings
+"*****************************************************************************
 syntax on
+set ruler
+set number
+
+let no_buffers_menu=1
+if !exists('g:not_finish_vimplug')
+  colorscheme molokai
+endif
+
+set mousemodel=popup
+set t_Co=256
+set guioptions=egmrti
+set gfn=Monospace\ 10
+
+if has("gui_running")
+  if has("gui_mac") || has("gui_macvim")
+    set guifont=Menlo:h12
+    set transparency=7
+  endif
+else
+  let g:CSApprox_loaded = 1
+
+  " IndentLine
+  let g:indentLine_enabled = 1
+  let g:indentLine_concealcursor = 0
+  let g:indentLine_char = '┆'
+  let g:indentLine_faster = 1
+
+  
+  if $COLORTERM == 'gnome-terminal'
+    set term=gnome-256color
+  else
+    if $TERM == 'xterm'
+      set term=xterm-256color
+    endif
+  endif
+  
+endif
+
+
+if &term =~ '256color'
+  set t_ut=
+endif
+
+
+"" Disable the blinking cursor.
+set gcr=a:blinkon0
+set scrolloff=3
+
+"" Status bar
+set laststatus=2
+
+"" Use modeline overrides
+set modeline
+set modelines=10
+
+set title
+set titleold="Terminal"
+set titlestring=%F
+
+set statusline=%F%m%r%h%w%=(%{&ff}/%Y)\ (line\ %l\/%L,\ col\ %c)\
+
+" vim-airline
+let g:airline_theme = 'powerlineish'
+let g:airline#extensions#syntastic#enabled = 1
+let g:airline#extensions#branch#enabled = 1
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tagbar#enabled = 1
+let g:airline_skip_empty_sections = 1
+let g:NERDTreeWinSize = 30
+
+nnoremap <silent> <F2> :NERDTreeFind<CR>
+nnoremap <silent> <F3> :NERDTreeToggle<CR>
 nnoremap ; :
-"let g:solarized_termcolors="256"
-set background=dark
-colorscheme gruvbox 
+nnoremap <C-e> :Eval<CR>
+nnoremap E :%Eval<CR>
 
-" Trigger configuration. Do not use <tab> if you use
-" https://github.com/Valloric/YouCompleteMe.
-let g:UltiSnipsExpandTrigger="<tab>"
-let g:UltiSnipsJumpForwardTrigger="<c-b>"
-let g:UltiSnipsJumpBackwardTrigger="<c-z>"
+"*****************************************************************************
+"" Convenience variables
+"*****************************************************************************
 
-" If you want :UltiSnipsEdit to split your window.
-let g:UltiSnipsEditSplit="vertical"
+" vim-airline
+if !exists('g:airline_symbols')
+  let g:airline_symbols = {}
+endif
 
 let g:airline_powerline_fonts = 1
 
-nnoremap <F3> :NumbersToggle<CR>
-nnoremap <F4> :NumbersOnOff<CR>
+if !exists('g:airline_powerline_fonts')
+  let g:airline#extensions#tabline#left_sep = ' '
+  let g:airline#extensions#tabline#left_alt_sep = '|'
+  let g:airline_left_sep          = '▶'
+  let g:airline_left_alt_sep      = '»'
+  let g:airline_right_sep         = '◀'
+  let g:airline_right_alt_sep     = '«'
+  let g:airline#extensions#branch#prefix     = '⤴' "➔, ➥, ⎇
+  let g:airline#extensions#readonly#symbol   = '⊘'
+  let g:airline#extensions#linecolumn#prefix = '¶'
+  let g:airline#extensions#paste#symbol      = 'ρ'
+  let g:airline_symbols.linenr    = '␊'
+  let g:airline_symbols.branch    = '⎇'
+  let g:airline_symbols.paste     = 'ρ'
+  let g:airline_symbols.paste     = 'Þ'
+  let g:airline_symbols.paste     = '∥'
+  let g:airline_symbols.whitespace = 'Ξ'
+else
+  let g:airline#extensions#tabline#left_sep = ''
+  let g:airline#extensions#tabline#left_alt_sep = ''
 
-" autocmd! BufWritePost,BufEnter * Neomake
-let g:ycm_key_list_select_completion = ['<C-j>']
-let g:ycm_key_list_previous_completion = ['<C-k>']
-let g:airline_theme='gruvbox'
-
-nnoremap <F2> :set invpaste paste?<CR>
-set pastetoggle=<F2>
-set showmode
-
-
-" Easymotion shortcut
-map <C-O> <Leader><Leader>w
-map <C-E> <Leader><Leader>W
-
-let g:hardtime_default_on = 0
-"copy
-vmap <F7> "+ygv"zy`>
-"paste (Shift-F7 to paste after normal cursor, Ctrl-F7 to paste over visual selection)
-nmap <F7> "zgP
-nmap <S-F7> "zgp
-imap <F7> <C-r><C-o>z
-vmap <C-F7> "zp`]
-cmap <F7> <C-r><C-o>z
-"copy register
-
-autocmd FocusGained * let @z=@+
+  " powerline symbols
+  let g:airline_left_sep = ''
+  let g:airline_left_alt_sep = ''
+  let g:airline_right_sep = ''
+  let g:airline_right_alt_sep = ''
+  let g:airline_symbols.branch = ''
+  let g:airline_symbols.readonly = ''
+  let g:airline_symbols.linenr = ''
+endif
