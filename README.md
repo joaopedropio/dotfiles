@@ -5,7 +5,7 @@ fc-cache -vf
 fc-list
 
 #sistema
-pacman -S alsa-utils xorg-server xorg-server-utils xorg-xinit vim vlc net-tools dialog wpa_supplicant wpa_actiond pulseaudio slim cmus feh termite zsh
+pacman -S alsa-utils xorg-server xorg-xinit vim vlc net-tools dialog wpa_supplicant wpa_actiond pulseaudio slim cmus feh termite zsh gvfs-mtp pcmanfm 
 
 #i3
 yaourt i3-gaps-git i3blocks-gaps google-chrome-stable
