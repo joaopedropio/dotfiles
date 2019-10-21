@@ -6,4 +6,4 @@
 xmodmap ~/.Xmodmap
 feh --bg-scale ~/.wallpaper.jpg
 setxkbmap -layout br
-xrandr --dpi 80
+xrandr --dpi 100
