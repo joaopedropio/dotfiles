@@ -9,3 +9,9 @@ pacman -S alsa-utils xorg-server xorg-xinit vim vlc net-tools dialog wpa_supplic
 
 #i3
 yaourt i3-gaps-git i3blocks-gaps google-chrome-stable
+
+#drivers
+to make wifi and bluetooth to work, copy and paste these folders into /lib/firmware:
+
+wifi: cp -r ath10k /lib/firmware
+bluetooth: cp -r qca /lib/firmware
