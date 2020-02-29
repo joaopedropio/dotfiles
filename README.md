@@ -14,4 +14,10 @@ yaourt i3-gaps-git i3blocks-gaps google-chrome-stable
 to make wifi and bluetooth to work, copy and paste these folders into /lib/firmware:
 
 wifi: cp -r ath10k /lib/firmware
+
+
 bluetooth: cp -r qca /lib/firmware
+
+# install refind to use EFI bootloader
+# copy refind.conf to /boot/EFI/refind/refind.conf
+cp refind.conf /boot/EFI/refind/
